@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { SignedIn, SignedOut, RedirectToSignIn } from '@clerk/clerk-react'
+import { SignedIn, SignedOut, RedirectToSignIn } from '@clerk/react'
 import Navbar from './components/Navbar'
 import Menu from './components/Menu'
 import Preorder from './components/Preorder'
