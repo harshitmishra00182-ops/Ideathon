@@ -5,26 +5,20 @@ const UPI_ID   = 'harshitmishra00182-2@okicici'
 const UPI_NAME = 'CampusBite DMCE'
 
 const menuItems = [
-  { id:1,  name:'Vada Pav',    price:25,  prepTime:5,  emoji:'🥙', kcal:320, cat:'street'   },
-  { id:2,  name:'Pav Bhaji',   price:70,  prepTime:8,  emoji:'🍛', kcal:480, cat:'street'   },
-  { id:3,  name:'Bhel Puri',   price:35,  prepTime:3,  emoji:'🥗', kcal:210, cat:'street'   },
-  { id:4,  name:'Masala Chai', price:15,  prepTime:4,  emoji:'☕', kcal:90,  cat:'beverage' },
-  { id:5,  name:'Samosa',      price:20,  prepTime:5,  emoji:'🔺', kcal:180, cat:'snack'    },
-  { id:6,  name:'Thali',       price:120, prepTime:12, emoji:'🍱', kcal:850, cat:'meal'     },
-  { id:7,  name:'Veg Frankie', price:50,  prepTime:5,  emoji:'🌯', kcal:340, cat:'snack'    },
-  { id:8,  name:'Cold Coffee', price:60,  prepTime:3,  emoji:'🧋', kcal:180, cat:'beverage' },
-  { id:9,  name:'Mango Lassi', price:50,  prepTime:2,  emoji:'🥛', kcal:220, cat:'beverage' },
-  { id:10, name:'Chicken Biryani', price:120, prepTime:15, emoji:'🍗', kcal:750, cat:'meal' },
+  { id:1,  name:'Vada Pav',       price:25,  prepTime:5,  emoji:'🥙', kcal:320, cat:'street'   },
+  { id:2,  name:'Pav Bhaji',      price:70,  prepTime:8,  emoji:'🍛', kcal:480, cat:'street'   },
+  { id:3,  name:'Bhel Puri',      price:35,  prepTime:3,  emoji:'🥗', kcal:210, cat:'street'   },
+  { id:4,  name:'Masala Chai',    price:15,  prepTime:4,  emoji:'☕', kcal:90,  cat:'beverage' },
+  { id:5,  name:'Samosa',         price:20,  prepTime:5,  emoji:'🔺', kcal:180, cat:'snack'    },
+  { id:6,  name:'Thali',          price:120, prepTime:12, emoji:'🍱', kcal:850, cat:'meal'     },
+  { id:7,  name:'Veg Frankie',    price:50,  prepTime:5,  emoji:'🌯', kcal:340, cat:'snack'    },
+  { id:8,  name:'Cold Coffee',    price:60,  prepTime:3,  emoji:'🧋', kcal:180, cat:'beverage' },
+  { id:9,  name:'Mango Lassi',    price:50,  prepTime:2,  emoji:'🥛', kcal:220, cat:'beverage' },
+  { id:10, name:'Chicken Biryani',price:120, prepTime:15, emoji:'🍗', kcal:750, cat:'meal'     },
 ]
 
-// AI suggestion pairs: itemId → suggested item ids
 const SUGGEST_MAP = {
-  1: [4, 5],   // Vada Pav → Chai, Samosa
-  2: [4, 3],   // Pav Bhaji → Chai, Bhel Puri
-  6: [8, 9],   // Thali → Cold Coffee, Lassi
-  10:[9, 3],   // Biryani → Lassi, Bhel Puri
-  4: [1, 5],   // Chai → Vada Pav, Samosa
-  8: [5, 7],   // Cold Coffee → Samosa, Frankie
+  1:[4,5], 2:[4,3], 6:[8,9], 10:[9,3], 4:[1,5], 8:[5,7],
 }
 const DEFAULT_SUGGESTS = [4, 5, 9]
 
@@ -40,7 +34,6 @@ const buildUpiUri = (amount, token) => {
   return `upi://pay?${p}`
 }
 
-// ── AI Suggestions ─────────────────────────────────────────────────────────────
 function AISuggestions({ cart, onAdd }) {
   const cartIds = Object.keys(cart).map(Number)
   if (!cartIds.length) return null
@@ -61,7 +54,7 @@ function AISuggestions({ cart, onAdd }) {
                  'Customers also ordered'
 
   return (
-    <div style={{ background:'linear-gradient(135deg,#fff7ed,#fffbf5)', border:'1.5px solid #fed7aa', borderRadius:16, padding:'16px 18px', marginBottom:20 }}>
+    <div style={{ background:'linear-gradient(135deg,#fff7ed,#fffbf5)', border:'1.5px solid #fed7aa', borderRadius:16, padding:'16px', marginBottom:16 }}>
       <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:12 }}>
         <span style={{ fontSize:'1.2rem' }}>🤖</span>
         <div>
@@ -69,18 +62,15 @@ function AISuggestions({ cart, onAdd }) {
           <div style={{ fontSize:'0.75rem', color:'#9a6520' }}>{reason}</div>
         </div>
       </div>
-      <div style={{ display:'flex', gap:10, flexWrap:'wrap' }}>
+      <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
         {suggestions.map(item => (
-          <div key={item.id} style={{ display:'flex', alignItems:'center', gap:10, background:'#fff', border:'1px solid #fed7aa', borderRadius:12, padding:'10px 13px', flex:1, minWidth:130 }}>
-            <span style={{ fontSize:'1.5rem' }}>{item.emoji}</span>
+          <div key={item.id} style={{ display:'flex', alignItems:'center', gap:8, background:'#fff', border:'1px solid #fed7aa', borderRadius:12, padding:'8px 10px', flex:1, minWidth:120 }}>
+            <span style={{ fontSize:'1.3rem' }}>{item.emoji}</span>
             <div style={{ flex:1, minWidth:0 }}>
-              <div style={{ fontWeight:700, fontSize:'0.83rem', color:'#1a1a1a', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{item.name}</div>
-              <div style={{ fontSize:'0.73rem', color:'#ea580c', fontWeight:700 }}>₹{item.price}</div>
+              <div style={{ fontWeight:700, fontSize:'0.8rem', color:'#1a1a1a', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{item.name}</div>
+              <div style={{ fontSize:'0.72rem', color:'#ea580c', fontWeight:700 }}>₹{item.price}</div>
             </div>
-            <button
-              onClick={() => onAdd(item)}
-              style={{ background:'#ea580c', color:'#fff', border:'none', borderRadius:8, padding:'5px 10px', fontSize:'0.75rem', fontWeight:700, cursor:'pointer', flexShrink:0 }}
-            >+ Add</button>
+            <button onClick={() => onAdd(item)} style={{ background:'#ea580c', color:'#fff', border:'none', borderRadius:8, padding:'5px 8px', fontSize:'0.72rem', fontWeight:700, cursor:'pointer', flexShrink:0 }}>+Add</button>
           </div>
         ))}
       </div>
@@ -88,160 +78,123 @@ function AISuggestions({ cart, onAdd }) {
   )
 }
 
-// ── Order Confirmation ─────────────────────────────────────────────────────────
 function Confirmation({ order, onBack }) {
-  const [method,  setMethod ] = useState(null)
-  const [utrInput,setUtrInput] = useState('')
-  const [utrError,setUtrError] = useState('')
-  const [paid,    setPaid   ] = useState(false)
+  const [method,   setMethod  ] = useState(null)
+  const [utrInput, setUtrInput] = useState('')
+  const [utrError, setUtrError] = useState('')
+  const [paid,     setPaid    ] = useState(false)
 
   const upiUri = buildUpiUri(order.total, order.token)
 
   const handleUtrSubmit = () => {
     const val = utrInput.trim()
-    // UTR is 12 digits for IMPS/UPI
-    if (!/^\d{12}$/.test(val)) {
-      setUtrError('Enter a valid 12-digit UTR number from your payment app')
-      return
-    }
+    if (!/^\d{12}$/.test(val)) { setUtrError('Enter a valid 12-digit UTR number'); return }
     setUtrError('')
     setPaid(true)
   }
 
   return (
-    <div style={{ minHeight:'100vh', background:'#02030a', fontFamily:"'Nunito',sans-serif", display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'40px 20px' }}>
+    <div style={{ minHeight:'100vh', background:'#02030a', fontFamily:"'Nunito',sans-serif", display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'24px 16px' }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Orbitron:wght@700;900&display=swap');`}</style>
-      <div style={{ background:'#0d0f1a', border:'1px solid #1e2235', borderRadius:24, padding:'36px 32px', maxWidth:500, width:'100%', boxShadow:'0 0 60px rgba(249,115,22,.15)', textAlign:'center' }}>
-
-        <div style={{ fontSize:'2.2rem', marginBottom:8 }}>🎉</div>
-        <div style={{ color:'rgba(226,232,255,.45)', fontSize:'0.75rem', fontWeight:700, letterSpacing:'0.12em', textTransform:'uppercase' }}>Order Confirmed</div>
-
-        {/* Token */}
-        <div style={{ fontFamily:"'Orbitron',monospace", fontSize:'clamp(2.4rem,8vw,3.6rem)', fontWeight:900, background:'linear-gradient(90deg,#f97316,#fbbf24)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', letterSpacing:'0.12em', lineHeight:1.1, margin:'6px 0 8px' }}>
+      <div style={{ background:'#0d0f1a', border:'1px solid #1e2235', borderRadius:24, padding:'28px 20px', maxWidth:480, width:'100%', boxShadow:'0 0 60px rgba(249,115,22,.15)', textAlign:'center' }}>
+        <div style={{ fontSize:'2rem', marginBottom:6 }}>🎉</div>
+        <div style={{ color:'rgba(226,232,255,.45)', fontSize:'0.72rem', fontWeight:700, letterSpacing:'0.12em', textTransform:'uppercase' }}>Order Confirmed</div>
+        <div style={{ fontFamily:"'Orbitron',monospace", fontSize:'clamp(2rem,8vw,3.2rem)', fontWeight:900, background:'linear-gradient(90deg,#f97316,#fbbf24)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', letterSpacing:'0.12em', lineHeight:1.1, margin:'6px 0 8px' }}>
           #{order.token}
         </div>
-        <div style={{ color:'rgba(226,232,255,.5)', fontSize:'0.82rem', marginBottom:8 }}>Your token number — show this at the counter</div>
+        <div style={{ color:'rgba(226,232,255,.5)', fontSize:'0.8rem', marginBottom:10 }}>Show this at the counter</div>
 
-        {/* Slot + time */}
-        <div style={{ display:'flex', gap:8, justifyContent:'center', flexWrap:'wrap', marginBottom:16 }}>
-          <div style={{ display:'inline-flex', alignItems:'center', gap:6, background:'rgba(251,191,36,.1)', border:'1px solid rgba(251,191,36,.3)', borderRadius:20, padding:'6px 14px' }}>
-            <span>🕐</span><span style={{ color:'#fbbf24', fontWeight:700, fontSize:'0.84rem' }}>{order.slot}</span>
+        <div style={{ display:'flex', gap:8, justifyContent:'center', flexWrap:'wrap', marginBottom:14 }}>
+          <div style={{ display:'inline-flex', alignItems:'center', gap:6, background:'rgba(251,191,36,.1)', border:'1px solid rgba(251,191,36,.3)', borderRadius:20, padding:'5px 12px' }}>
+            <span>🕐</span><span style={{ color:'#fbbf24', fontWeight:700, fontSize:'0.82rem' }}>{order.slot}</span>
           </div>
-          <div style={{ display:'inline-flex', alignItems:'center', gap:6, background:'rgba(34,197,94,.1)', border:'1px solid rgba(34,197,94,.3)', borderRadius:20, padding:'6px 14px' }}>
-            <span>⏱</span><span style={{ color:'#22c55e', fontWeight:700, fontSize:'0.84rem' }}>Ready in ~{order.prepTime} min</span>
+          <div style={{ display:'inline-flex', alignItems:'center', gap:6, background:'rgba(34,197,94,.1)', border:'1px solid rgba(34,197,94,.3)', borderRadius:20, padding:'5px 12px' }}>
+            <span>⏱</span><span style={{ color:'#22c55e', fontWeight:700, fontSize:'0.82rem' }}>~{order.prepTime} min</span>
           </div>
         </div>
 
-        {/* Items */}
-        <div style={{ marginBottom:20 }}>
+        <div style={{ marginBottom:16 }}>
           {order.items.map(it => (
-            <span key={it.id} style={{ display:'inline-flex', alignItems:'center', gap:5, background:'rgba(249,115,22,.1)', border:'1px solid rgba(249,115,22,.2)', borderRadius:20, padding:'4px 11px', fontSize:'0.78rem', color:'#f97316', fontWeight:600, margin:'3px' }}>
+            <span key={it.id} style={{ display:'inline-flex', alignItems:'center', gap:4, background:'rgba(249,115,22,.1)', border:'1px solid rgba(249,115,22,.2)', borderRadius:20, padding:'3px 10px', fontSize:'0.76rem', color:'#f97316', fontWeight:600, margin:'3px' }}>
               {it.emoji} {it.name} ×{it.qty}
             </span>
           ))}
         </div>
 
-        {/* Payment section */}
-        <div style={{ background:'#131629', borderRadius:16, padding:20, textAlign:'left' }}>
-          <div style={{ fontWeight:800, fontSize:'0.9rem', color:'rgba(226,232,255,.7)', marginBottom:14 }}>💳 Pay ₹{order.total}</div>
+        <div style={{ background:'#131629', borderRadius:16, padding:16, textAlign:'left' }}>
+          <div style={{ fontWeight:800, fontSize:'0.88rem', color:'rgba(226,232,255,.7)', marginBottom:12 }}>💳 Pay ₹{order.total}</div>
 
-          {/* COD option */}
-          <div
-            onClick={() => { if (!paid) { setMethod('cod'); setUtrInput(''); setUtrError('') } }}
-            style={{ display:'flex', alignItems:'center', gap:12, padding:'13px 15px', borderRadius:11, cursor: paid?'default':'pointer', marginBottom:8, border:method==='cod'?'2px solid #f97316':'1px solid #1e2235', background:method==='cod'?'rgba(249,115,22,.08)':'transparent', transition:'all .15s', opacity: paid && method!=='cod' ? 0.4 : 1 }}
-          >
-            <span style={{ fontSize:'1.4rem', width:34, textAlign:'center' }}>💵</span>
-            <div>
-              <div style={{ fontWeight:700, fontSize:'0.92rem', color:'#e2e8ff' }}>Cash on Delivery</div>
-              <div style={{ fontSize:'0.76rem', color:'rgba(226,232,255,.4)', marginTop:2 }}>Pay ₹{order.total} cash when you collect</div>
+          {/* COD */}
+          <div onClick={() => { if (!paid) { setMethod('cod'); setUtrInput(''); setUtrError('') } }}
+            style={{ display:'flex', alignItems:'center', gap:10, padding:'12px 14px', borderRadius:11, cursor:paid?'default':'pointer', marginBottom:8, border:method==='cod'?'2px solid #f97316':'1px solid #1e2235', background:method==='cod'?'rgba(249,115,22,.08)':'transparent', opacity:paid&&method!=='cod'?0.4:1, transition:'all .15s' }}>
+            <span style={{ fontSize:'1.3rem', width:30, textAlign:'center' }}>💵</span>
+            <div style={{ flex:1 }}>
+              <div style={{ fontWeight:700, fontSize:'0.88rem', color:'#e2e8ff' }}>Cash on Delivery</div>
+              <div style={{ fontSize:'0.74rem', color:'rgba(226,232,255,.4)', marginTop:2 }}>Pay ₹{order.total} at counter</div>
             </div>
-            {method==='cod' && <span style={{ marginLeft:'auto', color:'#f97316' }}>✓</span>}
+            {method==='cod' && <span style={{ color:'#f97316' }}>✓</span>}
           </div>
 
-          {/* UPI option */}
-          <div
-            onClick={() => { if (!paid) { setMethod('upi'); setUtrInput(''); setUtrError('') } }}
-            style={{ display:'flex', alignItems:'center', gap:12, padding:'13px 15px', borderRadius:11, cursor: paid?'default':'pointer', marginBottom:8, border:method==='upi'?'2px solid #f97316':'1px solid #1e2235', background:method==='upi'?'rgba(249,115,22,.08)':'transparent', transition:'all .15s', opacity: paid && method!=='upi' ? 0.4 : 1 }}
-          >
-            <span style={{ fontSize:'1.4rem', width:34, textAlign:'center' }}>📱</span>
-            <div>
-              <div style={{ fontWeight:700, fontSize:'0.92rem', color:'#e2e8ff' }}>UPI Payment</div>
-              <div style={{ fontSize:'0.76rem', color:'rgba(226,232,255,.4)', marginTop:2 }}>GPay · PhonePe · Paytm · any UPI app</div>
+          {/* UPI */}
+          <div onClick={() => { if (!paid) { setMethod('upi'); setUtrInput(''); setUtrError('') } }}
+            style={{ display:'flex', alignItems:'center', gap:10, padding:'12px 14px', borderRadius:11, cursor:paid?'default':'pointer', marginBottom:8, border:method==='upi'?'2px solid #f97316':'1px solid #1e2235', background:method==='upi'?'rgba(249,115,22,.08)':'transparent', opacity:paid&&method!=='upi'?0.4:1, transition:'all .15s' }}>
+            <span style={{ fontSize:'1.3rem', width:30, textAlign:'center' }}>📱</span>
+            <div style={{ flex:1 }}>
+              <div style={{ fontWeight:700, fontSize:'0.88rem', color:'#e2e8ff' }}>UPI Payment</div>
+              <div style={{ fontSize:'0.74rem', color:'rgba(226,232,255,.4)', marginTop:2 }}>GPay · PhonePe · Paytm</div>
             </div>
-            {method==='upi' && <span style={{ marginLeft:'auto', color:'#f97316' }}>✓</span>}
+            {method==='upi' && <span style={{ color:'#f97316' }}>✓</span>}
           </div>
 
-          {/* UPI QR + UTR entry */}
           {method==='upi' && !paid && (
             <div style={{ marginTop:8 }}>
-              <div style={{ textAlign:'center', marginBottom:12 }}>
-                <div style={{ color:'rgba(226,232,255,.4)', fontSize:'0.76rem', marginBottom:10 }}>
-                  Scan to pay <span style={{ color:'#22c55e', fontWeight:700 }}>₹{order.total}</span>
+              <div style={{ textAlign:'center', marginBottom:10 }}>
+                <div style={{ color:'rgba(226,232,255,.4)', fontSize:'0.74rem', marginBottom:8 }}>Scan to pay <span style={{ color:'#22c55e', fontWeight:700 }}>₹{order.total}</span></div>
+                <div style={{ background:'#fff', borderRadius:12, padding:12, display:'inline-block' }}>
+                  <QRCodeSVG value={upiUri} size={150} level="H" fgColor="#1a1a1a" includeMargin={false} />
                 </div>
-                <div style={{ background:'#fff', borderRadius:14, padding:14, display:'inline-block', boxShadow:'0 4px 24px rgba(249,115,22,.2)' }}>
-                  <QRCodeSVG value={upiUri} size={170} level="H" fgColor="#1a1a1a" includeMargin={false} />
-                </div>
-                <div style={{ color:'rgba(226,232,255,.25)', fontSize:'0.7rem', marginTop:6 }}>
-                  UPI: <span style={{ color:'#fbbf24', fontWeight:700 }}>{UPI_ID}</span> · Ref: #{order.token}
+                <div style={{ color:'rgba(226,232,255,.25)', fontSize:'0.68rem', marginTop:5 }}>
+                  UPI: <span style={{ color:'#fbbf24', fontWeight:700 }}>{UPI_ID}</span>
                 </div>
               </div>
-
-              {/* UTR input */}
-              <div style={{ background:'#0d0f1a', border:'1px solid #1e2235', borderRadius:12, padding:16 }}>
-                <div style={{ fontWeight:700, fontSize:'0.82rem', color:'rgba(226,232,255,.6)', marginBottom:6 }}>
-                  🔐 Enter UTR number to confirm payment
-                </div>
-                <div style={{ fontSize:'0.72rem', color:'rgba(226,232,255,.35)', marginBottom:10 }}>
-                  Find the 12-digit UTR in your GPay / PhonePe / Paytm transaction history after paying
-                </div>
+              <div style={{ background:'#0d0f1a', border:'1px solid #1e2235', borderRadius:12, padding:14 }}>
+                <div style={{ fontWeight:700, fontSize:'0.8rem', color:'rgba(226,232,255,.6)', marginBottom:5 }}>🔐 Enter UTR to confirm</div>
+                <div style={{ fontSize:'0.7rem', color:'rgba(226,232,255,.35)', marginBottom:8 }}>12-digit UTR from your payment app</div>
                 <input
-                  type="text"
-                  maxLength={12}
-                  placeholder="e.g. 426891234567"
+                  type="text" maxLength={12} placeholder="e.g. 426891234567"
                   value={utrInput}
                   onChange={e => { setUtrInput(e.target.value.replace(/\D/g,'')); setUtrError('') }}
-                  style={{ width:'100%', padding:'10px 14px', borderRadius:9, border: utrError?'1.5px solid #ef4444':'1.5px solid #1e2235', background:'#131629', color:'#e2e8ff', fontSize:'0.92rem', fontFamily:"'Orbitron',monospace", letterSpacing:'0.08em', outline:'none', boxSizing:'border-box', marginBottom: utrError?6:0 }}
+                  style={{ width:'100%', padding:'9px 12px', borderRadius:9, border:utrError?'1.5px solid #ef4444':'1.5px solid #1e2235', background:'#131629', color:'#e2e8ff', fontSize:'0.88rem', fontFamily:"'Orbitron',monospace", letterSpacing:'0.08em', outline:'none', boxSizing:'border-box', marginBottom:utrError?5:0 }}
                 />
-                {utrError && <div style={{ color:'#ef4444', fontSize:'0.72rem', marginBottom:8 }}>{utrError}</div>}
-                <button
-                  onClick={handleUtrSubmit}
-                  style={{ width:'100%', padding:11, marginTop:10, background: utrInput.length===12?'linear-gradient(135deg,#f97316,#ef4444)':'#1e2235', color: utrInput.length===12?'#fff':'rgba(226,232,255,.3)', border:'none', borderRadius:9, fontWeight:800, fontSize:'0.88rem', cursor: utrInput.length===12?'pointer':'not-allowed', transition:'all .2s' }}
-                >
-                  ✅ Verify & Confirm Payment
+                {utrError && <div style={{ color:'#ef4444', fontSize:'0.7rem', marginBottom:6 }}>{utrError}</div>}
+                <button onClick={handleUtrSubmit}
+                  style={{ width:'100%', padding:10, marginTop:8, background:utrInput.length===12?'linear-gradient(135deg,#f97316,#ef4444)':'#1e2235', color:utrInput.length===12?'#fff':'rgba(226,232,255,.3)', border:'none', borderRadius:9, fontWeight:800, fontSize:'0.85rem', cursor:utrInput.length===12?'pointer':'not-allowed', transition:'all .2s' }}>
+                  ✅ Verify & Confirm
                 </button>
               </div>
             </div>
           )}
 
-          {/* COD confirm button */}
           {method==='cod' && !paid && (
-            <button
-              onClick={() => setPaid(true)}
-              style={{ width:'100%', padding:13, marginTop:14, background:'linear-gradient(135deg,#f97316,#ef4444)', color:'#fff', border:'none', borderRadius:11, fontWeight:800, fontSize:'0.95rem', cursor:'pointer' }}
-            >
-              ✅ Confirm — I'll Pay Cash at Counter
+            <button onClick={() => setPaid(true)}
+              style={{ width:'100%', padding:12, marginTop:12, background:'linear-gradient(135deg,#f97316,#ef4444)', color:'#fff', border:'none', borderRadius:11, fontWeight:800, fontSize:'0.9rem', cursor:'pointer' }}>
+              ✅ Confirm — Pay Cash at Counter
             </button>
           )}
 
-          {/* Paid state */}
           {paid && (
-            <div style={{ textAlign:'center', marginTop:12 }}>
-              <div style={{ display:'inline-flex', alignItems:'center', gap:6, background:'rgba(34,197,94,.1)', border:'1px solid rgba(34,197,94,.3)', borderRadius:20, padding:'8px 18px', fontSize:'0.84rem', color:'#22c55e', fontWeight:700 }}>
+            <div style={{ textAlign:'center', marginTop:10 }}>
+              <div style={{ display:'inline-flex', alignItems:'center', gap:6, background:'rgba(34,197,94,.1)', border:'1px solid rgba(34,197,94,.3)', borderRadius:20, padding:'7px 16px', fontSize:'0.82rem', color:'#22c55e', fontWeight:700 }}>
                 ✅ {method==='cod' ? 'Confirmed — Pay cash at pickup' : `Payment Verified · UTR: ${utrInput}`}
               </div>
-              {method==='upi' && (
-                <div style={{ color:'rgba(226,232,255,.3)', fontSize:'0.72rem', marginTop:6 }}>
-                  UTR <span style={{ color:'#fbbf24', fontWeight:700, fontFamily:"'Orbitron',monospace" }}>{utrInput}</span> recorded
-                </div>
-              )}
-              <div style={{ color:'rgba(226,232,255,.3)', fontSize:'0.75rem', marginTop:8 }}>
+              <div style={{ color:'rgba(226,232,255,.3)', fontSize:'0.74rem', marginTop:8 }}>
                 Show token <span style={{ color:'#fbbf24', fontWeight:700 }}>#{order.token}</span> at the counter
               </div>
             </div>
           )}
         </div>
 
-        <button onClick={onBack} style={{ marginTop:20, background:'transparent', border:'1px solid #1e2235', color:'rgba(226,232,255,.4)', padding:'9px 22px', borderRadius:10, cursor:'pointer', fontSize:'0.83rem', fontWeight:600 }}>
+        <button onClick={onBack} style={{ marginTop:16, background:'transparent', border:'1px solid #1e2235', color:'rgba(226,232,255,.4)', padding:'8px 20px', borderRadius:10, cursor:'pointer', fontSize:'0.82rem', fontWeight:600 }}>
           ← Place Another Order
         </button>
       </div>
@@ -249,7 +202,6 @@ function Confirmation({ order, onBack }) {
   )
 }
 
-// ── Main PreOrder ──────────────────────────────────────────────────────────────
 export default function PreOrder() {
   const [cart,  setCart ] = useState({})
   const [slot,  setSlot ] = useState(null)
@@ -273,82 +225,98 @@ export default function PreOrder() {
   if (order) return <Confirmation order={order} onBack={() => { setOrder(null); setCart({}); setSlot(null) }} />
 
   return (
-    <div style={{ minHeight:'100vh', background:'#fffbf5', fontFamily:"'Nunito',sans-serif", padding:'32px 24px' }}>
-      <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+    <div style={{ minHeight:'100vh', background:'#fffbf5', fontFamily:"'Nunito',sans-serif", padding:'20px 16px' }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+        .po-layout { display: grid; grid-template-columns: 1fr 320px; gap: 20px; max-width: 900px; margin: 0 auto; }
+        .po-summary { background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,.06); position: sticky; top: 20px; align-self: start; }
+        .po-slots { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+        @media (max-width: 768px) {
+          .po-layout { grid-template-columns: 1fr; }
+          .po-summary { position: static; order: -1; }
+          .po-slots { grid-template-columns: repeat(3,1fr); }
+        }
+        @media (max-width: 400px) {
+          .po-slots { grid-template-columns: repeat(2,1fr); }
+        }
+      `}</style>
 
-      <div style={{ maxWidth:900, margin:'0 auto 28px' }}>
-        <div style={{ display:'inline-flex', alignItems:'center', gap:6, background:'#fff3e0', border:'1px solid #f97316', borderRadius:20, padding:'4px 12px', fontSize:'0.8rem', color:'#f97316', fontWeight:700, marginBottom:12 }}>⚡ Skip the Queue</div>
-        <h1 style={{ fontSize:'clamp(1.6rem,3vw,2.2rem)', fontWeight:900, color:'#1a1a1a', marginBottom:4 }}>Pre-Order Your Meal</h1>
-        <p style={{ color:'#888', fontSize:'0.95rem' }}>Order ahead, pick up on time — no waiting in line</p>
+      <div style={{ maxWidth:900, margin:'0 auto 20px' }}>
+        <div style={{ display:'inline-flex', alignItems:'center', gap:6, background:'#fff3e0', border:'1px solid #f97316', borderRadius:20, padding:'4px 12px', fontSize:'0.8rem', color:'#f97316', fontWeight:700, marginBottom:10 }}>⚡ Skip the Queue</div>
+        <h1 style={{ fontSize:'clamp(1.4rem,4vw,2.2rem)', fontWeight:900, color:'#1a1a1a', marginBottom:4 }}>Pre-Order Your Meal</h1>
+        <p style={{ color:'#888', fontSize:'0.9rem' }}>Order ahead, pick up on time — no waiting in line</p>
       </div>
 
-      {/* AI suggestions */}
       <div style={{ maxWidth:900, margin:'0 auto' }}>
         <AISuggestions cart={cart} onAdd={(item) => updateQty(item.id, 1)} />
       </div>
 
-      <div style={{ maxWidth:900, margin:'0 auto', display:'grid', gridTemplateColumns:'1fr 340px', gap:24 }}>
+      <div className="po-layout">
         <div>
           {/* Menu */}
-          <div style={{ background:'#fff', borderRadius:16, padding:24, boxShadow:'0 2px 12px rgba(0,0,0,.06)', marginBottom:20 }}>
-            <div style={{ fontWeight:800, fontSize:'1rem', color:'#1a1a1a', marginBottom:16 }}>📋 Select Items</div>
+          <div style={{ background:'#fff', borderRadius:16, padding:20, boxShadow:'0 2px 12px rgba(0,0,0,.06)', marginBottom:16 }}>
+            <div style={{ fontWeight:800, fontSize:'1rem', color:'#1a1a1a', marginBottom:14 }}>📋 Select Items</div>
             {menuItems.map(item => (
-              <div key={item.id} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'10px 0', borderBottom:'1px solid #f5f5f5' }}>
-                <div style={{ display:'flex', alignItems:'center', gap:12 }}>
-                  <span style={{ fontSize:'1.4rem' }}>{item.emoji}</span>
-                  <div>
-                    <div style={{ fontWeight:700, fontSize:'0.95rem', color:'#1a1a1a' }}>{item.name}</div>
-                    <div style={{ fontSize:'0.78rem', color:'#999', marginTop:2 }}>⏱ {item.prepTime} min · 🔥 {item.kcal} kcal · ₹{item.price}</div>
+              <div key={item.id} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'10px 0', borderBottom:'1px solid #f5f5f5', gap:8 }}>
+                <div style={{ display:'flex', alignItems:'center', gap:10, flex:1, minWidth:0 }}>
+                  <span style={{ fontSize:'1.3rem', flexShrink:0 }}>{item.emoji}</span>
+                  <div style={{ minWidth:0 }}>
+                    <div style={{ fontWeight:700, fontSize:'0.9rem', color:'#1a1a1a', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{item.name}</div>
+                    <div style={{ fontSize:'0.75rem', color:'#999', marginTop:2 }}>⏱{item.prepTime}m · 🔥{item.kcal}kcal · ₹{item.price}</div>
                   </div>
                 </div>
-                {cart[item.id]
-                  ? <div style={{ display:'flex', alignItems:'center', gap:8, background:'#f5f5f5', borderRadius:8, padding:'4px 8px' }}>
-                      <button style={{ background:'none', border:'none', fontSize:'1.1rem', cursor:'pointer', color:'#f97316', fontWeight:900 }} onClick={()=>updateQty(item.id,-1)}>−</button>
-                      <span style={{ fontWeight:800, minWidth:16, textAlign:'center' }}>{cart[item.id]}</span>
-                      <button style={{ background:'none', border:'none', fontSize:'1.1rem', cursor:'pointer', color:'#f97316', fontWeight:900 }} onClick={()=>updateQty(item.id,1)}>+</button>
-                    </div>
-                  : <button style={{ background:'#f97316', color:'#fff', border:'none', borderRadius:8, padding:'6px 14px', fontWeight:700, fontSize:'0.85rem', cursor:'pointer' }} onClick={()=>updateQty(item.id,1)}>+ Add</button>
-                }
+                <div style={{ flexShrink:0 }}>
+                  {cart[item.id]
+                    ? <div style={{ display:'flex', alignItems:'center', gap:6, background:'#f5f5f5', borderRadius:8, padding:'4px 8px' }}>
+                        <button style={{ background:'none', border:'none', fontSize:'1rem', cursor:'pointer', color:'#f97316', fontWeight:900 }} onClick={()=>updateQty(item.id,-1)}>−</button>
+                        <span style={{ fontWeight:800, minWidth:14, textAlign:'center', fontSize:'0.9rem' }}>{cart[item.id]}</span>
+                        <button style={{ background:'none', border:'none', fontSize:'1rem', cursor:'pointer', color:'#f97316', fontWeight:900 }} onClick={()=>updateQty(item.id,1)}>+</button>
+                      </div>
+                    : <button style={{ background:'#f97316', color:'#fff', border:'none', borderRadius:8, padding:'6px 12px', fontWeight:700, fontSize:'0.82rem', cursor:'pointer' }} onClick={()=>updateQty(item.id,1)}>+ Add</button>
+                  }
+                </div>
               </div>
             ))}
           </div>
 
-          {/* Time slots */}
-          <div style={{ background:'#fff', borderRadius:16, padding:24, boxShadow:'0 2px 12px rgba(0,0,0,.06)', marginBottom:20 }}>
-            <div style={{ fontWeight:800, fontSize:'1rem', color:'#1a1a1a', marginBottom:16 }}>🕐 Pick-up Time Slot</div>
-            <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:8 }}>
+          {/* Time Slots */}
+          <div style={{ background:'#fff', borderRadius:16, padding:20, boxShadow:'0 2px 12px rgba(0,0,0,.06)' }}>
+            <div style={{ fontWeight:800, fontSize:'1rem', color:'#1a1a1a', marginBottom:14 }}>🕐 Pick-up Time Slot</div>
+            <div className="po-slots">
               {timeSlots.map(s => (
-                <button key={s} onClick={()=>setSlot(s)} style={{ padding:'8px 0', borderRadius:10, textAlign:'center', border:slot===s?'2px solid #f97316':'1px solid #e5e5e5', background:slot===s?'#fff3e0':'#fff', color:slot===s?'#f97316':'#555', fontWeight:slot===s?700:500, fontSize:'0.82rem', cursor:'pointer' }}>{s}</button>
+                <button key={s} onClick={()=>setSlot(s)}
+                  style={{ padding:'8px 4px', borderRadius:10, textAlign:'center', border:slot===s?'2px solid #f97316':'1px solid #e5e5e5', background:slot===s?'#fff3e0':'#fff', color:slot===s?'#f97316':'#555', fontWeight:slot===s?700:500, fontSize:'0.8rem', cursor:'pointer' }}>
+                  {s}
+                </button>
               ))}
             </div>
           </div>
         </div>
 
         {/* Summary */}
-        <div style={{ background:'#fff', borderRadius:16, padding:24, boxShadow:'0 2px 12px rgba(0,0,0,.06)', position:'sticky', top:24, alignSelf:'start' }}>
-          <div style={{ fontWeight:800, fontSize:'1rem', color:'#1a1a1a', marginBottom:16 }}>🧾 Order Summary</div>
+        <div className="po-summary">
+          <div style={{ fontWeight:800, fontSize:'1rem', color:'#1a1a1a', marginBottom:14 }}>🧾 Order Summary</div>
           {!cartItems.length
-            ? <p style={{ color:'#bbb', fontSize:'0.88rem', textAlign:'center', padding:'20px 0' }}>No items added yet</p>
+            ? <p style={{ color:'#bbb', fontSize:'0.85rem', textAlign:'center', padding:'16px 0' }}>No items added yet</p>
             : cartItems.map(item => (
-                <div key={item.id} style={{ display:'flex', justifyContent:'space-between', fontSize:'0.88rem', color:'#555', marginBottom:8 }}>
-                  <span>{item.emoji} {item.name} ×{cart[item.id]}</span>
-                  <span>₹{item.price*cart[item.id]}</span>
+                <div key={item.id} style={{ display:'flex', justifyContent:'space-between', fontSize:'0.85rem', color:'#555', marginBottom:7, gap:8 }}>
+                  <span style={{ overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{item.emoji} {item.name} ×{cart[item.id]}</span>
+                  <span style={{ flexShrink:0, fontWeight:600 }}>₹{item.price*cart[item.id]}</span>
                 </div>
               ))
           }
-          <div style={{ borderTop:'1px dashed #eee', margin:'12px 0' }}/>
-          <div style={{ display:'flex', justifyContent:'space-between', fontSize:'0.88rem', color:'#555', marginBottom:8 }}><span>Subtotal</span><span>₹{subtotal}</span></div>
-          <div style={{ display:'flex', justifyContent:'space-between', fontSize:'0.88rem', color:'#555', marginBottom:8 }}><span>Est. prep</span><span>{maxPrep} min</span></div>
-          {slot && <div style={{ display:'flex', justifyContent:'space-between', fontSize:'0.88rem', color:'#555', marginBottom:8 }}><span>Pick-up slot</span><span>{slot}</span></div>}
-          <div style={{ borderTop:'1px dashed #eee', margin:'12px 0' }}/>
-          <div style={{ display:'flex', justifyContent:'space-between', fontWeight:900, fontSize:'1.05rem', color:'#1a1a1a' }}><span>Total</span><span>₹{subtotal}</span></div>
-          <button
-            onClick={placeOrder}
-            disabled={!slot||!cartItems.length}
-            style={{ width:'100%', padding:14, background:(!slot||!cartItems.length)?'#e5e5e5':'linear-gradient(135deg,#f97316,#ef4444)', color:(!slot||!cartItems.length)?'#aaa':'#fff', border:'none', borderRadius:12, fontWeight:800, fontSize:'1rem', cursor:(!slot||!cartItems.length)?'not-allowed':'pointer', marginTop:16 }}
-          >⚡ Place Pre-Order</button>
+          <div style={{ borderTop:'1px dashed #eee', margin:'10px 0' }}/>
+          <div style={{ display:'flex', justifyContent:'space-between', fontSize:'0.85rem', color:'#555', marginBottom:6 }}><span>Subtotal</span><span>₹{subtotal}</span></div>
+          <div style={{ display:'flex', justifyContent:'space-between', fontSize:'0.85rem', color:'#555', marginBottom:6 }}><span>Est. prep</span><span>{maxPrep} min</span></div>
+          {slot && <div style={{ display:'flex', justifyContent:'space-between', fontSize:'0.85rem', color:'#555', marginBottom:6 }}><span>Pick-up</span><span>{slot}</span></div>}
+          <div style={{ borderTop:'1px dashed #eee', margin:'10px 0' }}/>
+          <div style={{ display:'flex', justifyContent:'space-between', fontWeight:900, fontSize:'1rem', color:'#1a1a1a' }}><span>Total</span><span>₹{subtotal}</span></div>
+          <button onClick={placeOrder} disabled={!slot||!cartItems.length}
+            style={{ width:'100%', padding:13, background:(!slot||!cartItems.length)?'#e5e5e5':'linear-gradient(135deg,#f97316,#ef4444)', color:(!slot||!cartItems.length)?'#aaa':'#fff', border:'none', borderRadius:12, fontWeight:800, fontSize:'0.95rem', cursor:(!slot||!cartItems.length)?'not-allowed':'pointer', marginTop:14 }}>
+            ⚡ Place Pre-Order
+          </button>
           {(!slot||!cartItems.length) && (
-            <p style={{ color:'#bbb', fontSize:'0.75rem', textAlign:'center', marginTop:8 }}>
+            <p style={{ color:'#bbb', fontSize:'0.73rem', textAlign:'center', marginTop:7 }}>
               {!cartItems.length ? 'Add items to continue' : 'Select a time slot'}
             </p>
           )}
