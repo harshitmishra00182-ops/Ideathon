@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { SignedIn, SignedOut, RedirectToSignIn } from '@clerk/react'
+import { useAuth, RedirectToSignIn } from '@clerk/clerk-react'
 import Navbar from './components/Navbar'
 import Menu from './components/Menu'
 import Preorder from './components/Preorder'
@@ -10,6 +10,7 @@ import Wallet from './components/Wallet'
 import './App.css'
 
 const App = () => {
+  const { isSignedIn, isLoaded } = useAuth()
   const [activePage, setActivePage] = useState('menu')
 
   const renderPage = () => {
@@ -23,16 +24,13 @@ const App = () => {
     }
   }
 
+  if (!isLoaded) return <div>Loading...</div>
+  if (!isSignedIn) return <RedirectToSignIn />
+
   return (
     <div>
-      <SignedOut>
-        <RedirectToSignIn />
-      </SignedOut>
-
-      <SignedIn>
-        <Navbar activePage={activePage} setActivePage={setActivePage} />
-        {renderPage()}
-      </SignedIn>
+      <Navbar activePage={activePage} setActivePage={setActivePage} />
+      {renderPage()}
     </div>
   )
 }
