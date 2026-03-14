@@ -37,11 +37,52 @@ const MENU_ITEMS = [
   { id:27, cat:"Healthy",       name:"Greek Yogurt Parfait", desc:"Thick yogurt layered with granola, seasonal fruits & honey drizzle",         price:75,  rating:4.5, time:"2 min",  cal:280, tag:null,               veg:true,  img:"https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&h=300&fit=crop" },
 ];
 
+// ── Campus-relevant ads (no competitor food delivery platforms) ────────────────
 const ADS = [
-  { id:1, brand:"Swiggy Instamart", tagline:"Groceries in 10 minutes",      sub:"Use code CAMPUS20 for 20% off",   bg:"linear-gradient(135deg,#fc8019,#ff4500)", emoji:"🛵", badge:"SPONSOR" },
-  { id:2, brand:"boAt Lifestyle",   tagline:"Earbuds starting ₹999",        sub:"Campus exclusive: Extra 15% off", bg:"linear-gradient(135deg,#1a1a2e,#16213e)", emoji:"🎧", badge:"AD"      },
-  { id:3, brand:"Zomato Pro",       tagline:"Free delivery on every order", sub:"1 month free for DMCE students",  bg:"linear-gradient(135deg,#e23744,#cb202d)", emoji:"🍕", badge:"OFFER"  },
-  { id:4, brand:"Dunzo",            tagline:"Campus delivery in 20 min",    sub:"First 3 orders free delivery",    bg:"linear-gradient(135deg,#00b09b,#96c93d)", emoji:"📦", badge:"NEW"    },
+  {
+    id: 1,
+    brand: "CampusBite Pre-Order",
+    tagline: "Skip the queue, every single day",
+    sub: "Pre-order your meals & earn 2× reward points 🎁",
+    bg: "linear-gradient(135deg,#ea580c,#f97316)",
+    emoji: "⚡",
+    badge: "UPGRADE",
+    cta: "Pre-Order Now",
+    page: "preorder",
+  },
+  {
+    id: 2,
+    brand: "Rewards Program",
+    tagline: "Earn points on every order you place",
+    sub: "Redeem for free food — the more you order, the more you earn 🎁",
+    bg: "linear-gradient(135deg,#16a34a,#22c55e)",
+    emoji: "🎉",
+    badge: "OFFER",
+    cta: "View Rewards",
+    page: "rewards",
+  },
+  {
+    id: 3,
+    brand: "Campus Wallet",
+    tagline: "Top up once, never wait at the counter",
+    sub: "Load ₹500+ and get ₹50 bonus credited instantly 💳",
+    bg: "linear-gradient(135deg,#1d4ed8,#3b82f6)",
+    emoji: "💳",
+    badge: "NEW",
+    cta: "Top Up Now",
+    page: "wallet",
+  },
+  {
+    id: 4,
+    brand: "Group Order",
+    tagline: "Order with friends, split automatically",
+    sub: "No more collecting cash — everyone pays their share 👥",
+    bg: "linear-gradient(135deg,#7c3aed,#a855f7)",
+    emoji: "👥",
+    badge: "FEATURE",
+    cta: "Start Group Order",
+    page: "group",
+  },
 ];
 
 const SUGGEST_MAP = {
@@ -56,32 +97,45 @@ const buildUpiUri = (amount, token) => {
 };
 
 // ── Ad Banner ──────────────────────────────────────────────────────────────────
-function AdBanner() {
-  const [idx, setIdx]   = useState(0);
+function AdBanner({ onNavigate }) {
+  const [idx,  setIdx ] = useState(0);
   const [anim, setAnim] = useState(true);
+
   useEffect(() => {
     const t = setInterval(() => {
       setAnim(false);
-      setTimeout(() => { setIdx(i=>(i+1)%ADS.length); setAnim(true); }, 300);
+      setTimeout(() => { setIdx(i => (i + 1) % ADS.length); setAnim(true); }, 300);
     }, 4000);
     return () => clearInterval(t);
   }, []);
+
   const ad = ADS[idx];
+
   return (
-    <div style={{ margin:"1.5rem 0", borderRadius:16, background:ad.bg, padding:"18px 22px", display:"flex", alignItems:"center", gap:16, opacity:anim?1:0, transform:anim?"translateY(0)":"translateY(8px)", transition:"all .3s", boxShadow:"0 4px 20px rgba(0,0,0,.12)" }}>
+    <div style={{ margin:"1.5rem 0", borderRadius:16, background:ad.bg, padding:"18px 22px", display:"flex", alignItems:"center", gap:16, opacity:anim?1:0, transform:anim?"translateY(0)":"translateY(8px)", transition:"all .3s", boxShadow:"0 4px 20px rgba(0,0,0,.15)" }}>
       <span style={{ fontSize:"2.4rem", flexShrink:0 }}>{ad.emoji}</span>
-      <div style={{ flex:1 }}>
+      <div style={{ flex:1, minWidth:0 }}>
         <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:3 }}>
           <span style={{ fontWeight:800, fontSize:"1rem", color:"#fff" }}>{ad.brand}</span>
-          <span style={{ fontSize:"0.62rem", fontWeight:700, background:"rgba(255,255,255,.2)", color:"#fff", borderRadius:6, padding:"2px 7px" }}>{ad.badge}</span>
+          <span style={{ fontSize:"0.62rem", fontWeight:700, background:"rgba(255,255,255,.22)", color:"#fff", borderRadius:6, padding:"2px 7px" }}>{ad.badge}</span>
         </div>
         <div style={{ color:"rgba(255,255,255,.95)", fontWeight:700, fontSize:"0.92rem" }}>{ad.tagline}</div>
-        <div style={{ color:"rgba(255,255,255,.65)", fontSize:"0.76rem", marginTop:2 }}>{ad.sub}</div>
+        <div style={{ color:"rgba(255,255,255,.7)", fontSize:"0.76rem", marginTop:2 }}>{ad.sub}</div>
       </div>
-      <div style={{ display:"flex", gap:6 }}>
-        {ADS.map((_,i) => (
-          <div key={i} onClick={()=>setIdx(i)} style={{ width:i===idx?20:6, height:6, borderRadius:3, background:i===idx?"rgba(255,255,255,.9)":"rgba(255,255,255,.3)", cursor:"pointer", transition:"all .3s" }} />
-        ))}
+      <div style={{ display:"flex", flexDirection:"column", alignItems:"flex-end", gap:10, flexShrink:0 }}>
+        <button
+          onClick={() => onNavigate(ad.page)}
+          style={{ background:"rgba(255,255,255,.2)", border:"1.5px solid rgba(255,255,255,.5)", color:"#fff", borderRadius:20, padding:"6px 14px", fontSize:"0.76rem", fontWeight:700, cursor:"pointer", whiteSpace:"nowrap", backdropFilter:"blur(4px)", transition:"background .18s" }}
+          onMouseEnter={e => e.target.style.background="rgba(255,255,255,.35)"}
+          onMouseLeave={e => e.target.style.background="rgba(255,255,255,.2)"}
+        >
+          {ad.cta} →
+        </button>
+        <div style={{ display:"flex", gap:5 }}>
+          {ADS.map((_, i) => (
+            <div key={i} onClick={() => setIdx(i)} style={{ width:i===idx?18:5, height:5, borderRadius:3, background:i===idx?"rgba(255,255,255,.9)":"rgba(255,255,255,.3)", cursor:"pointer", transition:"all .3s" }} />
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -147,7 +201,6 @@ function OrderConfirmation({ token, items, total, prepTime, onBack }) {
         <div style={{ fontSize:"2.2rem", marginBottom:8 }}>🎉</div>
         <div style={{ color:"rgba(226,232,255,.45)", fontSize:"0.75rem", fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase" }}>Order Confirmed</div>
 
-        {/* Big token — no QR */}
         <div style={{ fontFamily:"'Orbitron',monospace", fontSize:"clamp(2.4rem,8vw,3.6rem)", fontWeight:900, background:"linear-gradient(90deg,#f97316,#fbbf24)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", letterSpacing:"0.12em", lineHeight:1.1, margin:"6px 0 8px" }}>
           #{token}
         </div>
@@ -165,11 +218,9 @@ function OrderConfirmation({ token, items, total, prepTime, onBack }) {
           ))}
         </div>
 
-        {/* Payment */}
         <div style={{ background:"#131629", borderRadius:16, padding:20, textAlign:"left" }}>
           <div style={{ fontWeight:800, fontSize:"0.9rem", color:"rgba(226,232,255,.7)", marginBottom:14 }}>💳 Pay ₹{total}</div>
 
-          {/* COD */}
           <div onClick={()=>{ if(!paid){setMethod("cod");setUtrInput("");setUtrError("");} }} style={{ display:"flex", alignItems:"center", gap:12, padding:"13px 15px", borderRadius:11, cursor:paid?"default":"pointer", marginBottom:8, border:method==="cod"?"2px solid #f97316":"1px solid #1e2235", background:method==="cod"?"rgba(249,115,22,.08)":"transparent", transition:"all .15s", opacity:paid&&method!=="cod"?0.4:1 }}>
             <span style={{ fontSize:"1.4rem", width:34, textAlign:"center" }}>💵</span>
             <div>
@@ -179,7 +230,6 @@ function OrderConfirmation({ token, items, total, prepTime, onBack }) {
             {method==="cod" && <span style={{ marginLeft:"auto", color:"#f97316" }}>✓</span>}
           </div>
 
-          {/* UPI */}
           <div onClick={()=>{ if(!paid){setMethod("upi");setUtrInput("");setUtrError("");} }} style={{ display:"flex", alignItems:"center", gap:12, padding:"13px 15px", borderRadius:11, cursor:paid?"default":"pointer", marginBottom:8, border:method==="upi"?"2px solid #f97316":"1px solid #1e2235", background:method==="upi"?"rgba(249,115,22,.08)":"transparent", transition:"all .15s", opacity:paid&&method!=="upi"?0.4:1 }}>
             <span style={{ fontSize:"1.4rem", width:34, textAlign:"center" }}>📱</span>
             <div>
@@ -189,7 +239,6 @@ function OrderConfirmation({ token, items, total, prepTime, onBack }) {
             {method==="upi" && <span style={{ marginLeft:"auto", color:"#f97316" }}>✓</span>}
           </div>
 
-          {/* UPI QR + UTR input */}
           {method==="upi" && !paid && (
             <div style={{ marginTop:8 }}>
               <div style={{ textAlign:"center", marginBottom:12 }}>
@@ -203,42 +252,28 @@ function OrderConfirmation({ token, items, total, prepTime, onBack }) {
                   UPI: <span style={{ color:"#fbbf24", fontWeight:700 }}>{UPI_ID}</span> · Ref: #{token}
                 </div>
               </div>
-
-              {/* UTR verification box */}
               <div style={{ background:"#0d0f1a", border:"1px solid #1e2235", borderRadius:12, padding:16 }}>
-                <div style={{ fontWeight:700, fontSize:"0.82rem", color:"rgba(226,232,255,.6)", marginBottom:4 }}>
-                  🔐 Enter UTR to confirm payment
-                </div>
-                <div style={{ fontSize:"0.72rem", color:"rgba(226,232,255,.35)", marginBottom:10 }}>
-                  Find the 12-digit UTR in your GPay / PhonePe / Paytm receipt after paying
-                </div>
-                <input
-                  type="text"
-                  maxLength={12}
-                  placeholder="e.g. 426891234567"
-                  value={utrInput}
+                <div style={{ fontWeight:700, fontSize:"0.82rem", color:"rgba(226,232,255,.6)", marginBottom:4 }}>🔐 Enter UTR to confirm payment</div>
+                <div style={{ fontSize:"0.72rem", color:"rgba(226,232,255,.35)", marginBottom:10 }}>Find the 12-digit UTR in your GPay / PhonePe / Paytm receipt after paying</div>
+                <input type="text" maxLength={12} placeholder="e.g. 426891234567" value={utrInput}
                   onChange={e=>{ setUtrInput(e.target.value.replace(/\D/g,"")); setUtrError(""); }}
                   style={{ width:"100%", padding:"10px 14px", borderRadius:9, border:utrError?"1.5px solid #ef4444":"1.5px solid #2a2d3e", background:"#131629", color:"#e2e8ff", fontSize:"0.92rem", fontFamily:"'Orbitron',monospace", letterSpacing:"0.08em", outline:"none", boxSizing:"border-box" }}
                 />
                 {utrError && <div style={{ color:"#ef4444", fontSize:"0.72rem", marginTop:6 }}>{utrError}</div>}
-                <button
-                  onClick={handleUtrSubmit}
-                  style={{ width:"100%", padding:11, marginTop:10, background:utrInput.length===12?"linear-gradient(135deg,#f97316,#ef4444)":"#1e2235", color:utrInput.length===12?"#fff":"rgba(226,232,255,.3)", border:"none", borderRadius:9, fontWeight:800, fontSize:"0.88rem", cursor:utrInput.length===12?"pointer":"not-allowed", transition:"all .2s" }}
-                >
+                <button onClick={handleUtrSubmit}
+                  style={{ width:"100%", padding:11, marginTop:10, background:utrInput.length===12?"linear-gradient(135deg,#f97316,#ef4444)":"#1e2235", color:utrInput.length===12?"#fff":"rgba(226,232,255,.3)", border:"none", borderRadius:9, fontWeight:800, fontSize:"0.88rem", cursor:utrInput.length===12?"pointer":"not-allowed", transition:"all .2s" }}>
                   ✅ Verify & Confirm Payment
                 </button>
               </div>
             </div>
           )}
 
-          {/* COD confirm */}
           {method==="cod" && !paid && (
             <button onClick={()=>setPaid(true)} style={{ width:"100%", padding:13, marginTop:14, background:"linear-gradient(135deg,#f97316,#ef4444)", color:"#fff", border:"none", borderRadius:11, fontWeight:800, fontSize:"0.95rem", cursor:"pointer" }}>
               ✅ Confirm — I'll Pay Cash at Counter
             </button>
           )}
 
-          {/* Paid */}
           {paid && (
             <div style={{ textAlign:"center", marginTop:12 }}>
               <div style={{ display:"inline-flex", alignItems:"center", gap:6, background:"rgba(34,197,94,.1)", border:"1px solid rgba(34,197,94,.3)", borderRadius:20, padding:"8px 18px", fontSize:"0.84rem", color:"#22c55e", fontWeight:700 }}>
@@ -265,7 +300,7 @@ function OrderConfirmation({ token, items, total, prepTime, onBack }) {
 }
 
 // ── Main Menu ──────────────────────────────────────────────────────────────────
-export default function Menu() {
+export default function Menu({ setActivePage = () => {} }) {
   const [category,  setCategory ] = useState("All");
   const [search,    setSearch   ] = useState("");
   const [cart,      setCart     ] = useState({});
@@ -421,7 +456,7 @@ export default function Menu() {
             </p>
           </div>
 
-          <AdBanner />
+          <AdBanner onNavigate={setActivePage} />
           <AISuggestions cart={cart} onAdd={addToCart} />
 
           <div className="mn-controls">
@@ -464,7 +499,6 @@ export default function Menu() {
               <div className="mn-cart-empty"><div className="ceico">🍱</div><p>Your cart is empty!</p></div>
             ) : (
               <>
-                {/* AI suggestions inside cart */}
                 <div style={{ background:"#fff7ed", border:"1px solid #fed7aa", borderRadius:12, padding:"12px 14px", marginBottom:12 }}>
                   <div style={{ fontSize:"0.78rem", fontWeight:700, color:"#ea580c", marginBottom:8 }}>🤖 Add to your order?</div>
                   {(() => {

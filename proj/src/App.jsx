@@ -20,8 +20,7 @@ const App = () => {
       case 'nutrition': return <Nutrition />
       case 'rewards':   return <Reward />
       case 'wallet':    return <Wallet />
-      default:          return <Menu />
-    }
+default: return <Menu setActivePage={setActivePage} />    }
   }
 
   if (!isLoaded) return <div>Loading...</div>
