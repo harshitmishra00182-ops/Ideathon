@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { gsap } from "gsap";
+import { useUser, useClerk } from '@clerk/clerk-react';
 
 const NAV_LINKS = [
   { label: "Menu",        icon: "🍽",  page: "menu"      },
@@ -20,7 +21,10 @@ const TICKER_ITEMS = [
 ];
 
 export default function Navbar({ activePage, setActivePage }) {
-  const [open, setOpen]       = useState(false);
+  const { user } = useUser();
+  const { signOut } = useClerk();
+
+  const [open, setOpen]         = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   const navBarRef   = useRef(null);
@@ -37,7 +41,6 @@ export default function Navbar({ activePage, setActivePage }) {
   const drawerTlRef = useRef(null);
   const openRef     = useRef(false);
 
-  /* 1 — Mount entrance */
   useEffect(() => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
@@ -48,11 +51,9 @@ export default function Navbar({ activePage, setActivePage }) {
     return () => ctx.revert();
   }, []);
 
-  /* 2 — Logo bounce on hover */
   const onLogoHover = () =>
     gsap.to(logoIconRef.current, { rotation: 14, scale: 1.12, duration: 0.18, ease: "power2.out", yoyo: true, repeat: 1 });
 
-  /* 3 — Scroll shadow */
   useEffect(() => {
     const fn = () => {
       const past = window.scrollY > 20;
@@ -68,7 +69,6 @@ export default function Navbar({ activePage, setActivePage }) {
     return () => window.removeEventListener("scroll", fn);
   }, []);
 
-  /* 4 — Drawer */
   useEffect(() => {
     gsap.set(drawerRef.current, { height: 0, opacity: 0 });
     drawerTlRef.current = gsap.timeline({ paused: true })
@@ -97,7 +97,6 @@ export default function Navbar({ activePage, setActivePage }) {
     }
   };
 
-  /* 5 — Magnetic hover */
   const onLinkMouseMove = (e, el) => {
     if (!el) return;
     const r  = el.getBoundingClientRect();
@@ -105,12 +104,12 @@ export default function Navbar({ activePage, setActivePage }) {
     const dy = (e.clientY - (r.top  + r.height / 2)) / (r.height / 2);
     gsap.to(el, { x: dx * 4, y: dy * 2.5, duration: 0.2, ease: "power2.out" });
   };
+
   const onLinkLeave = (el) => {
     if (!el) return;
     gsap.to(el, { x: 0, y: 0, duration: 0.38, ease: "elastic.out(1,0.5)" });
   };
 
-  /* 6 — Join burst */
   const onJoinClick = () => {
     const btn = joinBtnRef.current;
     if (!btn) return;
@@ -135,17 +134,23 @@ export default function Navbar({ activePage, setActivePage }) {
     gsap.fromTo(btn, { scale: 0.88 }, { scale: 1, duration: 0.44, ease: "elastic.out(1,0.4)" });
   };
 
-  const handleNavClick = (page) => {
-    setActivePage(page);
+  const handleNavClick = (page) => setActivePage(page);
+
+  const getInitial = () => {
+    if (user.firstName) return user.firstName[0].toUpperCase();
+    return user.emailAddresses[0].emailAddress[0].toUpperCase();
+  };
+
+  const getDisplayName = () => {
+    if (user.firstName) return user.firstName;
+    return user.emailAddresses[0].emailAddress.split('@')[0];
   };
 
   return (
     <>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Syne:wght@700;800&display=swap');
-
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-
         :root{
           --saffron:#ea580c; --saffron-d:#c2410c; --saffron-lt:#fed7aa; --saffron-bg:#fff7ed;
           --green:#16a34a;   --green-lt:#bbf7d0;  --green-bg:#f0fdf4;
@@ -154,9 +159,7 @@ export default function Navbar({ activePage, setActivePage }) {
           --ink:#1a1a1a;     --ink-2:#4b4b4b;     --ink-3:#8a8a8a;
           --border:#e8e0d4;  --border-h:#d4c4b0;
         }
-
         .nb-root{font-family:'DM Sans',sans-serif;position:sticky;top:0;z-index:1000;width:100%}
-
         .nb-stripe{
           height:3px;
           background:repeating-linear-gradient(90deg,
@@ -169,127 +172,51 @@ export default function Navbar({ activePage, setActivePage }) {
           animation:stripe-move 1.8s linear infinite;
         }
         @keyframes stripe-move{from{background-position:0 0}to{background-position:70px 0}}
-
-        .nb-bar{
-          background:var(--cream);
-          border-bottom:1px solid var(--border);
-          transition:background .3s;
-        }
+        .nb-bar{background:var(--cream);border-bottom:1px solid var(--border);transition:background .3s;}
         .nb-bar.scrolled{background:rgba(255,251,245,.97);backdrop-filter:blur(14px)}
-
-        .nb-inner{
-          display:flex;align-items:center;justify-content:space-between;
-          padding:0 1.5rem;height:62px;
-          max-width:1280px;margin:0 auto;
-        }
-
+        .nb-inner{display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;height:62px;max-width:1280px;margin:0 auto;}
         .nb-logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;opacity:0;cursor:pointer}
-        .nb-logo-icon{
-          width:40px;height:40px;border-radius:12px;background:var(--saffron);
-          display:flex;align-items:center;justify-content:center;font-size:21px;
-          flex-shrink:0;box-shadow:0 2px 10px rgba(234,88,12,.28);
-          will-change:transform;cursor:pointer;
-        }
-        .nb-logo-name{font-family:'Syne',sans-serif;font-weight:800;font-size:1.18rem;
-          color:var(--ink);letter-spacing:-.02em;white-space:nowrap;line-height:1.1}
+        .nb-logo-icon{width:40px;height:40px;border-radius:12px;background:var(--saffron);display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0;box-shadow:0 2px 10px rgba(234,88,12,.28);will-change:transform;cursor:pointer;}
+        .nb-logo-name{font-family:'Syne',sans-serif;font-weight:800;font-size:1.18rem;color:var(--ink);letter-spacing:-.02em;white-space:nowrap;line-height:1.1}
         .nb-logo-name em{color:var(--saffron);font-style:normal}
-        .nb-logo-badge{
-          display:inline-block;margin-top:2px;
-          font-size:.5rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
-          color:var(--green);background:var(--green-bg);
-          border:1px solid var(--green-lt);border-radius:4px;padding:1px 5px;
-        }
-
+        .nb-logo-badge{display:inline-block;margin-top:2px;font-size:.5rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--green);background:var(--green-bg);border:1px solid var(--green-lt);border-radius:4px;padding:1px 5px;}
         .nb-links{display:flex;align-items:center;gap:1px;list-style:none}
         @media(max-width:920px){.nb-links{display:none}}
-
-        .nb-link{
-          position:relative;padding:7px 12px;border-radius:10px;
-          text-decoration:none;font-size:.81rem;font-weight:500;
-          color:var(--ink-2);transition:color .18s,background .18s;
-          cursor:pointer;display:flex;align-items:center;gap:5px;
-          white-space:nowrap;border:none;background:transparent;
-          opacity:0;will-change:transform;
-        }
+        .nb-link{position:relative;padding:7px 12px;border-radius:10px;text-decoration:none;font-size:.81rem;font-weight:500;color:var(--ink-2);transition:color .18s,background .18s;cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap;border:none;background:transparent;opacity:0;will-change:transform;}
         .nb-link .lico{font-size:13px;transition:transform .2s}
         .nb-link:hover{color:var(--saffron);background:var(--saffron-bg)}
         .nb-link:hover .lico{transform:scale(1.22) rotate(-5deg)}
         .nb-link.act{color:var(--saffron);background:var(--saffron-bg);font-weight:600}
-        .nb-link::after{
-          content:'';position:absolute;bottom:4px;left:50%;right:50%;
-          height:2px;background:var(--saffron);border-radius:2px;
-          transition:left .22s,right .22s;
-        }
+        .nb-link::after{content:'';position:absolute;bottom:4px;left:50%;right:50%;height:2px;background:var(--saffron);border-radius:2px;transition:left .22s,right .22s;}
         .nb-link.act::after{left:18%;right:18%}
         .nb-link:hover::after{left:24%;right:24%}
-
         .nb-auth{display:flex;align-items:center;gap:8px;flex-shrink:0;opacity:0}
         @media(max-width:920px){.nb-auth{display:none}}
-
-        .btn-signin{
-          padding:7px 16px;border-radius:10px;font-size:.8rem;font-weight:500;
-          font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--ink-2);
-          border:1.5px solid var(--border);background:transparent;transition:all .18s;
-        }
+        .nb-user{display:flex;align-items:center;gap:8px;}
+        .nb-user-avatar{width:32px;height:32px;border-radius:50%;background:var(--saffron);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;box-shadow:0 2px 8px rgba(234,88,12,.3);overflow:hidden;flex-shrink:0;}
+        .nb-user-avatar img{width:100%;height:100%;object-fit:cover}
+        .nb-user-name{font-size:.82rem;font-weight:500;color:var(--ink-2);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+        .btn-signin{padding:7px 16px;border-radius:10px;font-size:.8rem;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--ink-2);border:1.5px solid var(--border);background:transparent;transition:all .18s;}
         .btn-signin:hover{border-color:var(--saffron);color:var(--saffron);background:var(--saffron-bg)}
-
-        .btn-join{
-          padding:8px 20px;border-radius:10px;font-size:.82rem;font-weight:600;
-          font-family:'DM Sans',sans-serif;cursor:pointer;border:none;
-          background:var(--saffron);color:#fff;
-          box-shadow:0 2px 10px rgba(234,88,12,.28);
-          transition:background .18s,box-shadow .18s,transform .12s;
-          will-change:transform;white-space:nowrap;
-        }
+        .btn-signout{padding:7px 16px;border-radius:10px;font-size:.8rem;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;color:#ef4444;border:1.5px solid #fecaca;background:transparent;transition:all .18s;}
+        .btn-signout:hover{background:#fef2f2;border-color:#ef4444}
+        .btn-join{padding:8px 20px;border-radius:10px;font-size:.82rem;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:var(--saffron);color:#fff;box-shadow:0 2px 10px rgba(234,88,12,.28);transition:background .18s,box-shadow .18s,transform .12s;will-change:transform;white-space:nowrap;}
         .btn-join:hover{background:var(--saffron-d);box-shadow:0 4px 18px rgba(234,88,12,.38);transform:translateY(-1px)}
-
-        .nb-ham{
-          display:none;flex-direction:column;gap:5px;
-          background:transparent;border:none;cursor:pointer;
-          padding:6px;border-radius:8px;
-        }
+        .nb-ham{display:none;flex-direction:column;gap:5px;background:transparent;border:none;cursor:pointer;padding:6px;border-radius:8px;}
         @media(max-width:920px){.nb-ham{display:flex}}
-        .ham-ln{
-          display:block;width:22px;height:2.5px;background:var(--ink);
-          border-radius:2px;transform-origin:center;will-change:transform;
-        }
-
-        .nb-drawer{
-          overflow:hidden;height:0;opacity:0;
-          background:var(--cream);
-          border-top:1px solid var(--border);
-          border-bottom:3px solid var(--saffron-lt);
-        }
+        .ham-ln{display:block;width:22px;height:2.5px;background:var(--ink);border-radius:2px;transform-origin:center;will-change:transform;}
+        .nb-drawer{overflow:hidden;height:0;opacity:0;background:var(--cream);border-top:1px solid var(--border);border-bottom:3px solid var(--saffron-lt);}
         .nb-drawer-inner{padding:.9rem 1.25rem 1.25rem;display:flex;flex-direction:column;gap:3px}
-
-        .nb-mlink{
-          display:flex;align-items:center;gap:10px;padding:10px 13px;border-radius:10px;
-          text-decoration:none;font-size:.9rem;font-weight:500;color:var(--ink-2);
-          transition:background .18s,color .18s;cursor:pointer;border:none;
-          background:transparent;width:100%;text-align:left;
-          opacity:0;will-change:transform;
-        }
+        .nb-mlink{display:flex;align-items:center;gap:10px;padding:10px 13px;border-radius:10px;text-decoration:none;font-size:.9rem;font-weight:500;color:var(--ink-2);transition:background .18s,color .18s;cursor:pointer;border:none;background:transparent;width:100%;text-align:left;opacity:0;will-change:transform;}
         .nb-mlink:hover,.nb-mlink.act{background:var(--saffron-bg);color:var(--saffron)}
         .nb-mlink .lico{font-size:16px;width:22px;text-align:center}
-
         .nb-mdivider{height:1px;background:var(--border);margin:8px 0}
-        .nb-mauth{display:flex;gap:8px;padding-top:4px}
-        .nb-mauth .btn-signin,.nb-mauth .btn-join{flex:1;padding:10px;text-align:center;font-size:.86rem}
-
-        .nb-ticker{
-          background:var(--green);overflow:hidden;height:28px;
-          display:flex;align-items:center;
-        }
-        .nb-ticker-track{
-          display:flex;animation:ticker-scroll 24s linear infinite;
-          white-space:nowrap;
-        }
+        .nb-mauth{display:flex;gap:8px;padding-top:4px;align-items:center}
+        .nb-mauth .btn-signin,.nb-mauth .btn-join,.nb-mauth .btn-signout{flex:1;padding:10px;text-align:center;font-size:.86rem}
+        .nb-ticker{background:var(--green);overflow:hidden;height:28px;display:flex;align-items:center;}
+        .nb-ticker-track{display:flex;animation:ticker-scroll 24s linear infinite;white-space:nowrap;}
         @keyframes ticker-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-        .nb-ticker-item{
-          padding:0 2rem;font-size:.71rem;font-weight:600;
-          color:#fff;letter-spacing:.04em;
-          display:flex;align-items:center;gap:8px;
-        }
+        .nb-ticker-item{padding:0 2rem;font-size:.71rem;font-weight:600;color:#fff;letter-spacing:.04em;display:flex;align-items:center;gap:8px;}
         .nb-ticker-sep{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.45);flex-shrink:0}
       `}</style>
 
@@ -324,15 +251,31 @@ export default function Navbar({ activePage, setActivePage }) {
               ))}
             </ul>
 
+            {/* Desktop auth */}
             <div className="nb-auth" ref={authRef}>
-              <button className="btn-signin">Sign in</button>
-              <button className="btn-join" ref={joinBtnRef} onClick={onJoinClick}>
-                Join Free 🎉
-              </button>
+              {user ? (
+                <div className="nb-user">
+                  <div className="nb-user-avatar">
+                    {user.imageUrl ? (
+                      <img src={user.imageUrl} alt="avatar" />
+                    ) : (
+                      <span>{getInitial()}</span>
+                    )}
+                  </div>
+                  <span className="nb-user-name">{getDisplayName()}</span>
+                  <button className="btn-signout" onClick={() => signOut()}>Sign out</button>
+                </div>
+              ) : (
+                <>
+                  <button className="btn-signin">Sign in</button>
+                  <button className="btn-join" ref={joinBtnRef} onClick={onJoinClick}>
+                    Join Free 🎉
+                  </button>
+                </>
+              )}
             </div>
 
-            <button className="nb-ham" onClick={toggleDrawer}
-              aria-label="Toggle menu" aria-expanded={open}>
+            <button className="nb-ham" onClick={toggleDrawer} aria-label="Toggle menu" aria-expanded={open}>
               <span className="ham-ln" ref={ham1Ref} />
               <span className="ham-ln" ref={ham2Ref} />
               <span className="ham-ln" ref={ham3Ref} />
@@ -343,7 +286,8 @@ export default function Navbar({ activePage, setActivePage }) {
         <div className="nb-drawer" ref={drawerRef} aria-hidden={!open}>
           <div className="nb-drawer-inner">
             {NAV_LINKS.map((l, i) => (
-              <a key={l.label}
+              <a
+                key={l.label}
                 className={`nb-mlink ${activePage === l.page ? "act" : ""}`}
                 ref={(el) => { mLinksRef.current[i] = el; }}
                 onClick={() => { handleNavClick(l.page); toggleDrawer(); }}
@@ -353,9 +297,22 @@ export default function Navbar({ activePage, setActivePage }) {
               </a>
             ))}
             <div className="nb-mdivider" />
+
+            {/* Mobile auth */}
             <div className="nb-mauth">
-              <button className="btn-signin">Sign in</button>
-              <button className="btn-join" onClick={onJoinClick}>Join Free 🎉</button>
+              {user ? (
+                <>
+                  <span style={{ fontSize: '.82rem', fontWeight: 500, color: 'var(--ink-2)' }}>
+                    👋 {getDisplayName()}
+                  </span>
+                  <button className="btn-signout" onClick={() => signOut()}>Sign out</button>
+                </>
+              ) : (
+                <>
+                  <button className="btn-signin">Sign in</button>
+                  <button className="btn-join" onClick={onJoinClick}>Join Free 🎉</button>
+                </>
+              )}
             </div>
           </div>
         </div>
